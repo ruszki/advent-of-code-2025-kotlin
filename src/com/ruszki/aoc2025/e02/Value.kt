@@ -1,6 +1,6 @@
 package com.ruszki.aoc2025.e02
 
-data class Value(val value: UInt) {
+data class Value(val value: ULong) {
     fun isInvalid(): Boolean {
         val stringValue = value.toString()
 
