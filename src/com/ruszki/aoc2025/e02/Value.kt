@@ -1,7 +1,7 @@
 package com.ruszki.aoc2025.e02
 
 data class Value(val value: ULong) {
-    fun isInvalid(): Boolean {
+    fun isSimpleInvalid(): Boolean {
         val stringValue = value.toString()
 
         return if (stringValue.length.mod(2) == 1) {

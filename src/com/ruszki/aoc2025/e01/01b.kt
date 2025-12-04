@@ -1,4 +1,6 @@
-package com.ruszki.aoc2025.e01/*
+package com.ruszki.aoc2025.e01
+
+/*
     Solution to https://adventofcode.com/2025/day/1 part 2
 
     # Day 1: Secret Entrance

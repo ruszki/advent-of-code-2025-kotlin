@@ -4,9 +4,12 @@ import java.io.File
 import java.io.FileReader
 
 class GiftShopComputer {
-    var invalidSum = 0uL
+    fun loadSimple(path: String): ULong {
+        return load(path) { it.simpleInvalidSum() }
+    }
 
-    fun load(path: String) {
+    private fun load(path: String, processor: (Range) -> ULong): ULong {
+        var invalidSum = 0uL
         var state = State.START
         var startString = ""
         var endString = ""
@@ -14,37 +17,43 @@ class GiftShopComputer {
         FileReader(File(path))
             .use { reader ->
                 while (reader.read()
-                    .also {
-                        val char = it.toChar()
+                        .also {
+                            val char = it.toChar()
 
-                        if (char == '-') {
-                            state = State.END
-                        } else if (char == ',') {
-                            state = State.START
+                            if (char == '-') {
+                                state = State.END
+                            } else if (char == ',') {
+                                state = State.START
 
-                            val start = startString.toULong()
-                            val end = endString.toULong()
+                                val start = startString.toULong()
+                                val end = endString.toULong()
 
-                            startString = ""
-                            endString = ""
+                                startString = ""
+                                endString = ""
 
-                            invalidSum += Range(start, end).invalidSum()
-                        } else if (state == State.START) {
-                            if (char.isDigit()) {
-                                startString += char
+                                val range = Range(start, end)
+
+                                invalidSum += processor(range)
+                            } else if (state == State.START) {
+                                if (char.isDigit()) {
+                                    startString += char
+                                }
+                            } else {
+                                if (char.isDigit()) {
+                                    endString += char
+                                }
                             }
-                        } else {
-                            if (char.isDigit()) {
-                                endString += char
-                            }
-                        }
-                    } != -1) {}
+                        } != -1
+                ) {
+                }
             }
 
         val start = startString.toULong()
         val end = endString.toULong()
 
-        invalidSum += Range(start, end).invalidSum()
+        val range = Range(start, end)
+
+        return invalidSum + processor(range)
     }
 
     enum class State {
