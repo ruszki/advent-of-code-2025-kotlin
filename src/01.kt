@@ -74,6 +74,7 @@ data class Rotation(val direction: Direction, val distance: UInt)
 fun main() {
     val startingValue = 50u
     var currentValue = startingValue
+    var zeroCount = 0
 
     File("src/input/01.txt")
         .useLines { it.forEach { line ->
@@ -81,10 +82,14 @@ fun main() {
                 val rotation = toRotation(line)
 
                 currentValue = rotate(currentValue, rotation)
+
+                if (currentValue == 0u) {
+                    zeroCount++
+                }
             }
         } }
 
-    println("Result = $currentValue")
+    println("Result = $zeroCount")
 }
 
 fun toRotation(s: String): Rotation {
