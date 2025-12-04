@@ -1,7 +1,5 @@
 package com.ruszki.aoc2025.e01
 
-import java.io.File
-
 /*
     Solution to https://adventofcode.com/2025/day/1
 
@@ -71,8 +69,8 @@ fun main() {
     val safe = Safe()
     var zeroCount = 0
 
-    safe.open("src/input/01.txt") {
-        if (it == 0u) {
+    safe.open("src/input/01.txt") { _, _, value ->
+        if (value == 0u) {
             zeroCount++
         }
     }

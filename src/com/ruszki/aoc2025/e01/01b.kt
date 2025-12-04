@@ -34,5 +34,31 @@ package com.ruszki.aoc2025.e01/*
  */
 
 fun main() {
+    val safe = Safe()
+    var zeroCount = 0u
 
+    safe.open("src/input/01.txt") { previousValue, rotation, value ->
+        zeroCount += when (rotation.direction) {
+            Direction.LEFT -> {
+                if (rotation.distance >= previousValue) {
+                    val remainder = rotation.distance - previousValue
+
+                    remainder.div(100u) + (if (previousValue == 0u) 0u else 1u)
+                } else {
+                    0u
+                }
+            }
+            Direction.RIGHT -> {
+                if (rotation.distance >= 100u - previousValue) {
+                    val remainder = rotation.distance - (100u - previousValue)
+
+                    remainder.div(100u) + 1u
+                } else {
+                    0u
+                }
+            }
+        }
+    }
+
+    println("Result = $zeroCount")
 }

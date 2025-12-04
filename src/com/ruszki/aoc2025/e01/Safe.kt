@@ -14,15 +14,16 @@ class Safe {
         }
     }
 
-    fun open(path: String, processor: (UInt) -> Unit) {
+    fun open(path: String, processor: (UInt, Rotation, UInt) -> Unit) {
         File(path)
             .useLines { it.forEach { line ->
                 run {
+                    val previousValue = value
                     val rotation = Rotation.from(line)
 
                     rotate(rotation)
 
-                    processor(value)
+                    processor(previousValue, rotation, value)
                 }
             } }
     }
