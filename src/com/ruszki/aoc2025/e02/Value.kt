@@ -11,4 +11,35 @@ data class Value(val value: ULong) {
                     stringValue.subSequence(stringValue.length / 2, stringValue.length)
         }
     }
+
+    fun isMultipleInvalid(): Boolean {
+        val stringValue = value.toString()
+
+        var currentLength = 1
+
+        while (currentLength <= stringValue.length.div(2)) {
+            val currentRepeatValue = stringValue.subSequence(0, currentLength)
+
+            if (stringValue.length.mod(currentLength) == 0) {
+                var currentMultiplier = 1
+
+                while (currentMultiplier * currentLength < stringValue.length &&
+                    stringValue.subSequence(
+                        currentMultiplier * currentLength,
+                        (currentMultiplier + 1) * currentLength
+                    )
+                        .equals(currentRepeatValue)) {
+                    currentMultiplier++
+                }
+
+                if (currentMultiplier * currentLength == stringValue.length) {
+                    return true
+                }
+            }
+
+            currentLength++
+        }
+
+        return false
+    }
 }

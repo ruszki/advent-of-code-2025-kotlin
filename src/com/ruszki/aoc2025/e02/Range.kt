@@ -5,6 +5,10 @@ data class Range(val startValue: ULong, val endValue: ULong) {
         return invalidSum { it.isSimpleInvalid() }
     }
 
+    fun multipleInvalidSum(): ULong {
+        return invalidSum { it.isMultipleInvalid() }
+    }
+
     private fun invalidSum(processor: (Value) -> Boolean): ULong {
         var invalidSum = 0uL
         var currentValue = startValue
