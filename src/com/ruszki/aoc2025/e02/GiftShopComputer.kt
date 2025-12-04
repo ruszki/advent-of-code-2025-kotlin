@@ -40,6 +40,11 @@ class GiftShopComputer {
                         }
                     } != -1) {}
             }
+
+        val start = startString.toULong()
+        val end = endString.toULong()
+
+        invalidSum += Range(start, end).invalidSum()
     }
 
     enum class State {
