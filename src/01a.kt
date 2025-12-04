@@ -76,7 +76,7 @@ fun main() {
     var currentValue = startingValue
     var zeroCount = 0
 
-    File("src/input/01.txt")
+    File("src/input/01a.txt")
         .useLines { it.forEach { line ->
             run {
                 val rotation = toRotation(line)
