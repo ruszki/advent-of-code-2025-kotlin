@@ -72,15 +72,19 @@ enum class Direction {
 data class Rotation(val direction: Direction, val distance: UInt)
 
 fun main() {
-    val rotations = File("src/input/01.txt")
-        .useLines { it.map { line -> toRotation(line)}.toList() }
-
     val startingValue = 50u
+    var currentValue = startingValue
 
-    val result = rotations.fold(startingValue) {
-        currentValue, rotation -> rotate(currentValue, rotation) }
+    File("src/input/01.txt")
+        .useLines { it.forEach { line ->
+            run {
+                val rotation = toRotation(line)
 
-    println("Result = $result")
+                currentValue = rotate(currentValue, rotation)
+            }
+        } }
+
+    println("Result = $currentValue")
 }
 
 fun toRotation(s: String): Rotation {
