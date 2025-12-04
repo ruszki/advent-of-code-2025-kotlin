@@ -1,3 +1,5 @@
+package com.ruszki.aoc2025.e01
+
 import java.io.File
 
 /*
@@ -65,48 +67,15 @@ import java.io.File
     Analyze the rotations in your attached document. What's the actual password to open the door?
  */
 
-enum class Direction {
-    LEFT, RIGHT
-}
-
-data class Rotation(val direction: Direction, val distance: UInt)
-
 fun main() {
-    val startingValue = 50u
-    var currentValue = startingValue
+    val safe = Safe()
     var zeroCount = 0
 
-    File("src/input/01a.txt")
-        .useLines { it.forEach { line ->
-            run {
-                val rotation = toRotation(line)
-
-                currentValue = rotate(currentValue, rotation)
-
-                if (currentValue == 0u) {
-                    zeroCount++
-                }
-            }
-        } }
+    safe.open("src/input/01.txt") {
+        if (it == 0u) {
+            zeroCount++
+        }
+    }
 
     println("Result = $zeroCount")
-}
-
-fun toRotation(s: String): Rotation {
-    val direction: Direction = when (s[0]) {
-        'R' -> Direction.RIGHT
-        'L' -> Direction.LEFT
-        else -> throw Exception("Invalid direction")
-    }
-
-    val distance = s.subSequence(1, s.length).toString().toUInt()
-
-    return Rotation(direction, distance)
-}
-
-fun rotate(origin: UInt, rotation: Rotation): UInt {
-    return when (rotation.direction) {
-        Direction.RIGHT -> (origin + rotation.distance).mod(100u)
-        Direction.LEFT -> (origin.toInt() - rotation.distance.toInt()).mod(100).toUInt()
-    }
 }
