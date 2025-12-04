@@ -1,3 +1,5 @@
+import java.io.File
+
 /*
     Solution to https://adventofcode.com/2025/day/1
 
@@ -70,8 +72,15 @@ enum class Direction {
 data class Rotation(val direction: Direction, val distance: UInt)
 
 fun main() {
-    println("5 + L10 = ${rotate(5u, toRotation("L10"))}")
-    println("95 + R5 = ${rotate(95u, toRotation("R5"))}")
+    val rotations = File("src/input/01.txt")
+        .useLines { it.map { line -> toRotation(line)}.toList() }
+
+    val startingValue = 50u
+
+    val result = rotations.fold(startingValue) {
+        currentValue, rotation -> rotate(currentValue, rotation) }
+
+    println("Result = $result")
 }
 
 fun toRotation(s: String): Rotation {
