@@ -32,5 +32,7 @@ package com.ruszki.aoc2025.e03
  */
 
 fun main() {
-    val batteryRack = BatteryRack.from("src/input/03.txt")
+    val result = BatteryRack.from("src/input/03.txt").outputJoltage(12u)
+
+    println("output joltage: $result")
 }

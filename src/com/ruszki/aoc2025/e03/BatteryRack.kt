@@ -16,7 +16,7 @@ data class BatteryRack(val batteries: List<Battery>) {
         }
     }
 
-    fun outputJoltage(): ULong {
-        return batteries.fold(0uL) { sumJoltage, battery -> sumJoltage + battery.maximumJoltage() }
+    fun outputJoltage(usedBanks: UInt): ULong {
+        return batteries.fold(0uL) { sumJoltage, battery -> sumJoltage + battery.maximumJoltage(usedBanks) }
     }
 }
