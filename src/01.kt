@@ -70,8 +70,20 @@ enum class Direction {
 data class Rotation(val direction: Direction, val distance: UInt)
 
 fun main() {
-    println("5 + L10 = ${rotate(5u, Rotation(Direction.LEFT, 10u))}")
-    println("95 + R5 = ${rotate(95u, Rotation(Direction.RIGHT, 5u))}")
+    println("5 + L10 = ${rotate(5u, toRotation("L10"))}")
+    println("95 + R5 = ${rotate(95u, toRotation("R5"))}")
+}
+
+fun toRotation(s: String): Rotation {
+    val direction: Direction = when (s[0]) {
+        'R' -> Direction.RIGHT
+        'L' -> Direction.LEFT
+        else -> throw Exception("Invalid direction")
+    }
+
+    val distance = s.subSequence(1, s.length).toString().toUInt()
+
+    return Rotation(direction, distance)
 }
 
 fun rotate(origin: UInt, rotation: Rotation): UInt {
