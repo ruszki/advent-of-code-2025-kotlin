@@ -5,4 +5,13 @@ fun main() {
     println("max joltage of 811111111111119: ${Battery.from("811111111111119").maximumJoltage()}")
     println("max joltage of 234234234234278: ${Battery.from("234234234234278").maximumJoltage()}")
     println("max joltage of 818181911112111: ${Battery.from("818181911112111").maximumJoltage()}")
+
+    val result = BatteryRack(listOf(
+        Battery.from("987654321111111"),
+        Battery.from("811111111111119"),
+        Battery.from("234234234234278"),
+        Battery.from("818181911112111")
+    )).outputJoltage()
+
+    println("output joltage: $result")
 }
