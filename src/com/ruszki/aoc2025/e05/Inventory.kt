@@ -7,7 +7,7 @@ import kotlin.use
 class Inventory {
     val ingredientRanges = mutableListOf<IngredientIdRange>()
 
-    var freshCount: UInt = 0u
+    var freshCount: ULong = 0u
         private set
 
     private fun addIngredient(ingredient: Ingredient) {
@@ -43,8 +43,8 @@ class Inventory {
                             val rangeLimits = line.split('-')
 
                             if (rangeLimits.size == 2) {
-                                val start = rangeLimits[0].toUInt()
-                                val end = rangeLimits[1].toUInt()
+                                val start = rangeLimits[0].toULong()
+                                val end = rangeLimits[1].toULong()
 
                                 val ingredientRange = IngredientIdRange(start, end)
 
@@ -53,7 +53,7 @@ class Inventory {
                         }
                     } else {
                         if (line.isNotBlank()) {
-                            val ingredient = Ingredient(line.toUInt())
+                            val ingredient = Ingredient(line.toULong())
 
                             inventory.addIngredient(ingredient)
                         }
