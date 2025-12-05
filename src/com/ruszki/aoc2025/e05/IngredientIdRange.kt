@@ -1,6 +1,6 @@
 package com.ruszki.aoc2025.e05
 
-class IngredientIdRange(val start: ULong, val end: ULong) {
+class IngredientIdRange(var start: ULong, var end: ULong) {
     fun includes(ingredient: Ingredient): Boolean {
         return ingredient.id in start..end
     }
@@ -9,5 +9,7 @@ class IngredientIdRange(val start: ULong, val end: ULong) {
         return "$start-$end"
     }
 
-
+    fun size(): ULong {
+        return end - start + 1uL
+    }
 }

@@ -46,5 +46,5 @@ package com.ruszki.aoc2025.e05
 fun main() {
     val inventory = Inventory.load("src/input/05.txt")
 
-    println("There is ${inventory.freshCount} fresh ingredients in the inventory")
+    println("There are ${inventory.freshCount} fresh ingredients in the inventory")
 }
