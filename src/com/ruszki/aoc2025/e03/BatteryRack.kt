@@ -1,22 +1,22 @@
 package com.ruszki.aoc2025.e03
 
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.use
 
-data class BatteryRack(val batteries: List<Battery>) {
+data class BatteryRack(val outputJoltage: ULong) {
     companion object {
-        fun from(path: String): BatteryRack {
-            val batteries = File(path)
-                .useLines {
-                    it.map { line ->
-                        if (line.length > 0) Battery.from(line) else null
-                    }.toList().filterNotNull()
-                }
+        fun from(pathString: String, usedBanks: UInt): BatteryRack {
+            val path = Paths.get(pathString)
 
-            return BatteryRack(batteries)
+            val outputJoltage = Files.lines(path).use { lines ->
+                lines.reduce(0uL, { outputJoltage, line ->
+                    outputJoltage + if (line.isNotEmpty()) Battery.from(line).maximumJoltage(usedBanks) else 0uL
+                }, {a, b -> a.plus(b)})
+            }
+
+            return BatteryRack(outputJoltage)
         }
-    }
-
-    fun outputJoltage(usedBanks: UInt): ULong {
-        return batteries.fold(0uL) { sumJoltage, battery -> sumJoltage + battery.maximumJoltage(usedBanks) }
     }
 }

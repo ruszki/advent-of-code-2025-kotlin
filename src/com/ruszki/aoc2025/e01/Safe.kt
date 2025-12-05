@@ -1,7 +1,7 @@
 package com.ruszki.aoc2025.e01
 
-import java.io.File
-import kotlin.sequences.forEach
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class Safe {
     var value: UInt = 50u
@@ -14,9 +14,11 @@ class Safe {
         }
     }
 
-    fun open(path: String, processor: (UInt, Rotation, UInt) -> Unit) {
-        File(path)
-            .useLines { it.forEach { line ->
+    fun open(pathString: String, processor: (UInt, Rotation, UInt) -> Unit) {
+        val path = Paths.get(pathString)
+
+        Files.lines(path).use { lines ->
+            lines.forEach { line ->
                 run {
                     val previousValue = value
                     val rotation = Rotation.from(line)
@@ -25,6 +27,7 @@ class Safe {
 
                     processor(previousValue, rotation, value)
                 }
-            } }
+            }
+        }
     }
 }

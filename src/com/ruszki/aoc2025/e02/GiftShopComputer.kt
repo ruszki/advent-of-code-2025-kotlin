@@ -2,6 +2,8 @@ package com.ruszki.aoc2025.e02
 
 import java.io.File
 import java.io.FileReader
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class GiftShopComputer {
     fun loadSimple(path: String): ULong {
@@ -12,45 +14,45 @@ class GiftShopComputer {
         return load(path) { it.multipleInvalidSum() }
     }
 
-    private fun load(path: String, processor: (Range) -> ULong): ULong {
+    private fun load(pathString: String, processor: (Range) -> ULong): ULong {
         var invalidSum = 0uL
         var state = State.START
         var startString = ""
         var endString = ""
 
-        FileReader(File(path))
-            .use { reader ->
-                while (reader.read()
-                        .also {
-                            val char = it.toChar()
+        val path = Paths.get(pathString)
 
-                            if (char == '-') {
-                                state = State.END
-                            } else if (char == ',') {
-                                state = State.START
+        Files.newBufferedReader(path).use { reader ->
+            var charInt = 0
 
-                                val start = startString.toULong()
-                                val end = endString.toULong()
+            while (reader.read().also { charInt = it } != -1) {
+                val char = charInt.toChar()
 
-                                startString = ""
-                                endString = ""
+                if (char == '-') {
+                    state = State.END
+                } else if (char == ',') {
+                    state = State.START
 
-                                val range = Range(start, end)
+                    val start = startString.toULong()
+                    val end = endString.toULong()
 
-                                invalidSum += processor(range)
-                            } else if (state == State.START) {
-                                if (char.isDigit()) {
-                                    startString += char
-                                }
-                            } else {
-                                if (char.isDigit()) {
-                                    endString += char
-                                }
-                            }
-                        } != -1
-                ) {
+                    startString = ""
+                    endString = ""
+
+                    val range = Range(start, end)
+
+                    invalidSum += processor(range)
+                } else if (state == State.START) {
+                    if (char.isDigit()) {
+                        startString += char
+                    }
+                } else {
+                    if (char.isDigit()) {
+                        endString += char
+                    }
                 }
             }
+        }
 
         val start = startString.toULong()
         val end = endString.toULong()
