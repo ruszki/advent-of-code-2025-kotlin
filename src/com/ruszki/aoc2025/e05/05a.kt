@@ -44,13 +44,7 @@ package com.ruszki.aoc2025.e05
  */
 
 fun main() {
-    val i1 = Ingredient(1u)
-    val i2 = Ingredient(5u)
-    val i3 = Ingredient(8u)
+    val inventory = Inventory.load("src/input/05.txt")
 
-    val iRange = IngredientIdRange(3u, 5u)
-
-    println("Ingredient ${i1.id} is ${if (iRange.includes(i1)) "" else "not "}included in range ${iRange}")
-    println("Ingredient ${i2.id} is ${if (iRange.includes(i2)) "" else "not "}included in range ${iRange}")
-    println("Ingredient ${i3.id} is ${if (iRange.includes(i3)) "" else "not "}included in range ${iRange}")
+    println("There is ${inventory.freshCount} fresh ingredients in the inventory")
 }
