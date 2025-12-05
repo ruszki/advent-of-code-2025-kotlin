@@ -49,5 +49,7 @@ package com.ruszki.aoc2025.e04
 
 
 fun main() {
-    println("Number of paper rolls: 0")
+    val printingDepartment = PrintingDepartment.load("src/input/04.txt")
+
+    println("Number of free paper rolls: ${printingDepartment.freePaperRollCount}")
 }

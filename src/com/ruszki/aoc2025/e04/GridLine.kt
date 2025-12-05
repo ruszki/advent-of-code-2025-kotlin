@@ -13,7 +13,9 @@ class GridLine(previousGL: GridLine? = null) {
         rolls.add(null)
     }
 
-    fun addRoll(roll: PaperRoll) {
+    fun addRoll() {
+        val roll = PaperRoll()
+
         rolls.add(roll)
 
         val rollIndex = rolls.size - 1
@@ -30,29 +32,36 @@ class GridLine(previousGL: GridLine? = null) {
     }
 
     fun getRoll(rollIndex: Int): PaperRoll? {
-        return rolls[rollIndex]
+        return rolls.getOrNull(rollIndex)
+    }
+
+    fun getFreeRollCount(): ULong {
+        return rolls.sumOf { roll -> if (roll?.isFree() == true) 1uL else 0uL }
     }
 
     fun removePrevious() {
-        val removedNeighbourTypes = listOf(NeighbourType.LEFT_UP, NeighbourType.UP, NeighbourType.RIGHT_UP)
+        if (previous != null) {
+            val removedNeighbourTypes = listOf(NeighbourType.LEFT_UP, NeighbourType.UP, NeighbourType.RIGHT_UP)
 
-        for (rollIndex in 0..<rolls.size) {
-            for (removedNeighbourType in removedNeighbourTypes) {
-                val roll = rolls[rollIndex]
-                val neighbour = removedNeighbourType.rollGetter(this, rollIndex)
+            for (rollIndex in 0..<rolls.size) {
+                for (removedNeighbourType in removedNeighbourTypes) {
+                    val roll = rolls[rollIndex]
+                    val neighbour = removedNeighbourType.rollGetter(this, rollIndex)
 
-                if (roll != null && neighbour != null) {
-                    roll.removeNeighbour(removedNeighbourType, neighbour)
+                    if (roll != null && neighbour != null) {
+                        roll.removeNeighbour(removedNeighbourType, neighbour)
+                    }
                 }
             }
-        }
 
-        previous = null
+            previous = null
+        }
     }
 
     fun setNext(value: GridLine) {
         if (next == null) {
             next = value
+            value.previous = this
 
             val addedNeighbourTypes = listOf(NeighbourType.LEFT_DOWN, NeighbourType.DOWN, NeighbourType.RIGHT_DOWN)
 
@@ -74,6 +83,6 @@ class GridLine(previousGL: GridLine? = null) {
     }
 
     override fun toString(): String {
-        return rolls.joinToString("") { if (it == null) "." else "@" }
+        return rolls.joinToString("") { if (it == null) "." else if (it.isFree()) "x" else "@" }
     }
 }

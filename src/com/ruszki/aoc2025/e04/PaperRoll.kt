@@ -20,11 +20,7 @@ class PaperRoll {
     }
 
     override fun toString(): String {
-        val neighbourToString = {type: NeighbourType -> {
-            val neighbour = neighbours[type]
-
-            if (neighbour == null) "." else "@"
-        } }
+        val neighbourToString = {type: NeighbourType -> if (neighbours[type] == null) "." else "@"}
 
         return "${neighbourToString(NeighbourType.LEFT_UP)}${neighbourToString(NeighbourType.UP)}${
             neighbourToString(
@@ -39,6 +35,14 @@ class PaperRoll {
                 NeighbourType.RIGHT_DOWN
             )
         }"
+    }
+
+    fun isFree(): Boolean {
+        return neighbours.size < 4
+    }
+
+    fun neighbourCount(): Int {
+        return neighbours.size
     }
 
     companion object {
