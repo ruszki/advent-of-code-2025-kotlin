@@ -1,6 +1,5 @@
 package com.ruszki.aoc2025.e04
 
-
 /*
     Solution to https://adventofcode.com/2025/day/4
 
