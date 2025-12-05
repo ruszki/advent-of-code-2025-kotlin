@@ -43,9 +43,7 @@ package com.ruszki.aoc2025.e02
  */
 
 fun main() {
-    val giftShopComputer = GiftShopComputer()
+    val giftShopComputer = GiftShopComputer.loadSimple("src/input/02.txt")
 
-    val simpleInvalidSum = giftShopComputer.loadSimple("src/input/02.txt")
-
-    println("invalid sum: $simpleInvalidSum")
+    println("invalid sum: ${giftShopComputer.invalidSum}")
 }

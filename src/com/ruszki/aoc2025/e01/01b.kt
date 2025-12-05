@@ -36,11 +36,8 @@ package com.ruszki.aoc2025.e01
  */
 
 fun main() {
-    val safe = Safe()
-    var zeroCount = 0u
-
-    safe.open("src/input/01.txt") { previousValue, rotation, value ->
-        zeroCount += when (rotation.direction) {
+    val safe = Safe.load("src/input/01.txt") { previousValue, rotation, _ ->
+        when (rotation.direction) {
             Direction.LEFT -> {
                 if (rotation.distance >= previousValue) {
                     val remainder = rotation.distance - previousValue
@@ -62,5 +59,5 @@ fun main() {
         }
     }
 
-    println("Result = $zeroCount")
+    println("Result = ${safe.processMatchCount}")
 }

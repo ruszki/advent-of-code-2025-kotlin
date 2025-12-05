@@ -7,6 +7,9 @@ class Safe {
     var value: UInt = 50u
         private set
 
+    var processMatchCount: UInt = 0u
+        private set
+
     private fun rotate(rotation: Rotation) {
         value = when (rotation.direction) {
             Direction.RIGHT -> (value + rotation.distance).mod(100u)
@@ -14,20 +17,24 @@ class Safe {
         }
     }
 
-    fun open(pathString: String, processor: (UInt, Rotation, UInt) -> Unit) {
-        val path = Paths.get(pathString)
+    companion object {
+        fun load(pathString: String, processor: (UInt, Rotation, UInt) -> UInt): Safe {
+            val safe = Safe()
 
-        Files.lines(path).use { lines ->
-            lines.forEach { line ->
-                run {
-                    val previousValue = value
+            val path = Paths.get(pathString)
+
+            Files.lines(path).use { lines ->
+                lines.forEach { line ->
+                    val previousValue = safe.value
                     val rotation = Rotation.from(line)
 
-                    rotate(rotation)
+                    safe.rotate(rotation)
 
-                    processor(previousValue, rotation, value)
+                    safe.processMatchCount += processor(previousValue, rotation, safe.value)
                 }
             }
+
+            return safe
         }
     }
 }

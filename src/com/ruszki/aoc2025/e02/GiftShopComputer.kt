@@ -1,65 +1,70 @@
 package com.ruszki.aoc2025.e02
 
-import java.io.File
-import java.io.FileReader
 import java.nio.file.Files
 import java.nio.file.Paths
 
 class GiftShopComputer {
-    fun loadSimple(path: String): ULong {
-        return load(path) { it.simpleInvalidSum() }
-    }
+    var invalidSum: ULong = 0uL
+        private set
 
-    fun loadMultiple(path: String): ULong {
-        return load(path) { it.multipleInvalidSum() }
-    }
+    companion object {
+        fun loadSimple(path: String): GiftShopComputer {
+            return load(path) { it.simpleInvalidSum() }
+        }
 
-    private fun load(pathString: String, processor: (Range) -> ULong): ULong {
-        var invalidSum = 0uL
-        var state = State.START
-        var startString = ""
-        var endString = ""
+        fun loadMultiple(path: String): GiftShopComputer {
+            return load(path) { it.multipleInvalidSum() }
+        }
 
-        val path = Paths.get(pathString)
+        private fun load(pathString: String, processor: (Range) -> ULong): GiftShopComputer {
+            val giftShopComputer = GiftShopComputer()
+            var state = State.START
+            var startString = ""
+            var endString = ""
 
-        Files.newBufferedReader(path).use { reader ->
-            var charInt = 0
+            val path = Paths.get(pathString)
 
-            while (reader.read().also { charInt = it } != -1) {
-                val char = charInt.toChar()
+            Files.newBufferedReader(path).use { reader ->
+                var charInt = 0
 
-                if (char == '-') {
-                    state = State.END
-                } else if (char == ',') {
-                    state = State.START
+                while (reader.read().also { charInt = it } != -1) {
+                    val char = charInt.toChar()
 
-                    val start = startString.toULong()
-                    val end = endString.toULong()
+                    if (char == '-') {
+                        state = State.END
+                    } else if (char == ',') {
+                        state = State.START
 
-                    startString = ""
-                    endString = ""
+                        val start = startString.toULong()
+                        val end = endString.toULong()
 
-                    val range = Range(start, end)
+                        startString = ""
+                        endString = ""
 
-                    invalidSum += processor(range)
-                } else if (state == State.START) {
-                    if (char.isDigit()) {
-                        startString += char
-                    }
-                } else {
-                    if (char.isDigit()) {
-                        endString += char
+                        val range = Range(start, end)
+
+                        giftShopComputer.invalidSum += processor(range)
+                    } else if (state == State.START) {
+                        if (char.isDigit()) {
+                            startString += char
+                        }
+                    } else {
+                        if (char.isDigit()) {
+                            endString += char
+                        }
                     }
                 }
             }
+
+            val start = startString.toULong()
+            val end = endString.toULong()
+
+            val range = Range(start, end)
+
+            giftShopComputer.invalidSum += processor(range)
+
+            return giftShopComputer
         }
-
-        val start = startString.toULong()
-        val end = endString.toULong()
-
-        val range = Range(start, end)
-
-        return invalidSum + processor(range)
     }
 
     enum class State {

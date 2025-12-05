@@ -66,14 +66,9 @@ package com.ruszki.aoc2025.e01
  */
 
 fun main() {
-    val safe = Safe()
-    var zeroCount = 0
-
-    safe.open("src/input/01.txt") { _, _, value ->
-        if (value == 0u) {
-            zeroCount++
-        }
+    val safe = Safe.load("src/input/01.txt") { _, _, value ->
+        if (value == 0u) 1u else 0u
     }
 
-    println("Result = $zeroCount")
+    println("Result = ${safe.processMatchCount}")
 }
