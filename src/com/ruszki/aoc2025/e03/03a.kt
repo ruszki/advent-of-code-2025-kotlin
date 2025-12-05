@@ -33,10 +33,6 @@ package com.ruszki.aoc2025.e03
     The total output joltage is the sum of the maximum joltage from each bank, so in this example, the total output joltage is 98 + 89 + 78 + 92 = 357.
 
     There are many batteries in front of you. Find the maximum joltage possible from each bank; what is the total output joltage?
-
-    Your puzzle answer was 17109.
-
-    The first half of this puzzle is complete! It provides one gold star: *
  */
 
 
