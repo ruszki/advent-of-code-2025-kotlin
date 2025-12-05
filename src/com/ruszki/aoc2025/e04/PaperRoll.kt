@@ -19,6 +19,14 @@ class PaperRoll {
         value.neighbours.remove(oppositeNeighbourTypes[type]!!)
     }
 
+    fun remove() {
+        for (neighbourEntry in neighbours.entries) {
+            neighbourEntry.value.neighbours.remove(oppositeNeighbourTypes[neighbourEntry.key]!!)
+        }
+
+        neighbours.clear()
+    }
+
     override fun toString(): String {
         val neighbourToString = {type: NeighbourType -> if (neighbours[type] == null) "." else "@"}
 

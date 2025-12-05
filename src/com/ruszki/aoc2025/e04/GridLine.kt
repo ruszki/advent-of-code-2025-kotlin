@@ -39,6 +39,16 @@ class GridLine(previousGL: GridLine? = null) {
         return rolls.sumOf { roll -> if (roll?.isFree() == true) 1uL else 0uL }
     }
 
+    fun removeFreeRolls(): ULong {
+        val removedRolls = rolls.mapNotNull { roll -> if (roll?.isFree() == true) roll else null }.toList()
+
+        rolls.replaceAll{if (removedRolls.contains(it)) null else it}
+
+        removedRolls.forEach { it.remove() }
+
+        return removedRolls.size.toULong()
+    }
+
     fun removePrevious() {
         if (previous != null) {
             val removedNeighbourTypes = listOf(NeighbourType.LEFT_UP, NeighbourType.UP, NeighbourType.RIGHT_UP)

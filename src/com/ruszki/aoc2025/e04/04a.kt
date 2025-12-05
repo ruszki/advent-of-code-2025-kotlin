@@ -47,9 +47,8 @@ package com.ruszki.aoc2025.e04
     Consider your complete diagram of the paper roll locations. How many rolls of paper can be accessed by a forklift?
  */
 
-
 fun main() {
     val printingDepartment = PrintingDepartment.load("src/input/04.txt")
 
-    println("Number of free paper rolls: ${printingDepartment.freePaperRollCount}")
+    println("Number of free paper rolls: ${printingDepartment.freePaperRollCountAtStart}")
 }
