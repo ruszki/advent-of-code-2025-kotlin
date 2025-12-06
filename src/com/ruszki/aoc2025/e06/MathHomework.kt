@@ -1,5 +1,6 @@
 package com.ruszki.aoc2025.e06
 
+import java.math.BigInteger
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.use
@@ -17,6 +18,10 @@ class MathHomework {
         problems.add(problem)
 
         return problem
+    }
+
+    override fun toString(): String {
+        return problems.joinToString("\n") { it.toString() } + "\n\nThe sum is ${result()}"
     }
 
     companion object {

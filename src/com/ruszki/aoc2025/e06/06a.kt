@@ -41,5 +41,5 @@ import com.ruszki.aoc2025.e05.Inventory
 fun main() {
     val mathHomework = MathHomework.load("src/input/06.txt")
 
-    println("The result is ${mathHomework.result()}")
+    println("The sum of results is ${mathHomework.result()}")
 }
