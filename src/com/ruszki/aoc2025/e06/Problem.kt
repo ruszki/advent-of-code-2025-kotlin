@@ -3,7 +3,7 @@ package com.ruszki.aoc2025.e06
 class Problem {
     var problemType = ProblemType.ADDITION
 
-    private val numbers = mutableListOf<ULong>()
+    val numbers = mutableListOf<ULong>()
 
     fun result(): ULong {
         return numbers.reduce(problemType.reducer)

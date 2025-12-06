@@ -39,7 +39,7 @@ import com.ruszki.aoc2025.e05.Inventory
  */
 
 fun main() {
-    val mathHomework = MathHomework.load("src/input/06.txt", {numbers, numberString -> numbers.add(numberString.toULong())})
+    val mathHomework = MathHomework.load("src/input/06.txt", {numbers, numberString -> numbers.add(numberString.trim().toULong())})
 
     println("The sum of results is ${mathHomework.result()}")
 }
