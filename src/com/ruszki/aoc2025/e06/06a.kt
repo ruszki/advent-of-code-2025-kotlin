@@ -39,5 +39,11 @@ import com.ruszki.aoc2025.e05.Inventory
  */
 
 fun main() {
-    println("There is no answer")
+    val problem = Problem()
+    problem.problemType = ProblemType.MULTIPLICATION
+    problem.addNumber(123uL)
+    problem.addNumber(45uL)
+    problem.addNumber(6uL)
+
+    println(problem)
 }
