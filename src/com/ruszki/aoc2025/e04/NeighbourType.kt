@@ -1,28 +1,28 @@
 package com.ruszki.aoc2025.e04
 
-enum class NeighbourType(val rollGetter: (GridLine, Int) -> PaperRoll?) {
+enum class NeighbourType(val isRollGetter: (GridLine, Int) -> Boolean) {
     LEFT_UP({ gl, index ->
-        gl.previous?.getRoll(index - 1)
+        gl.previous?.isRoll(index - 1) ?: false
     }),
     UP({ gl, index ->
-        gl.previous?.getRoll(index)
+        gl.previous?.isRoll(index) ?: false
     }),
     RIGHT_UP({ gl, index ->
-        gl.previous?.getRoll(index + 1)
+        gl.previous?.isRoll(index + 1) ?: false
     }),
     LEFT({ gl, index ->
-        gl.getRoll(index - 1)
+        gl.isRoll(index - 1)
     }),
     RIGHT({ gl, index ->
-        gl.getRoll(index + 1)
+        gl.isRoll(index + 1)
     }),
     LEFT_DOWN({ gl, index ->
-        gl.next?.getRoll(index - 1)
+        gl.next?.isRoll(index - 1) ?: false
     }),
     DOWN({ gl, index ->
-        gl.next?.getRoll(index)
+        gl.next?.isRoll(index) ?: false
     }),
     RIGHT_DOWN({ gl, index ->
-        gl.next?.getRoll(index + 1)
+        gl.next?.isRoll(index + 1) ?: false
     })
 }

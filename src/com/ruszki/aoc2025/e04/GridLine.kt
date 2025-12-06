@@ -7,84 +7,48 @@ class GridLine(previousGL: GridLine? = null) {
     var next: GridLine? = null
         private set
 
-    private val rolls = mutableListOf<PaperRoll?>()
+    private val rolls = mutableListOf<GridLocationType>()
 
     fun addEmptySpace() {
-        rolls.add(null)
+        rolls.add(GridLocationType.NOTHING)
     }
 
     fun addRoll() {
-        val roll = PaperRoll()
+        rolls.add(GridLocationType.PAPER_ROLL)
+    }
 
-        rolls.add(roll)
-
-        val rollIndex = rolls.size - 1
-
-        NeighbourType.entries.forEach { type ->
-            run {
-                val neighbour = type.rollGetter(this, rollIndex)
-
-                if (neighbour != null) {
-                    roll.setNeighbour(type, neighbour)
-                }
-            }
+    fun isRoll(rollIndex: Int): Boolean {
+        return when (rolls.getOrNull(rollIndex)) {
+            null -> false
+            GridLocationType.PAPER_ROLL -> true
+            GridLocationType.NOTHING -> false
         }
     }
 
-    fun getRoll(rollIndex: Int): PaperRoll? {
-        return rolls.getOrNull(rollIndex)
+    fun isFree(rollIndex: Int): Boolean {
+        return if (rolls.getOrNull(rollIndex) == GridLocationType.PAPER_ROLL) {
+            NeighbourType.entries.map { it.isRollGetter(this, rollIndex) }.count{ it } < 4
+        } else {
+            false
+        }
     }
 
     fun getFreeRollCount(): ULong {
-        return rolls.sumOf { roll -> if (roll?.isFree() == true) 1uL else 0uL }
+        return (0..<rolls.size).map { isFree(it) }.count{ it }.toULong()
     }
 
     fun removeFreeRolls(): ULong {
-        val removedRolls = rolls.mapNotNull { roll -> if (roll?.isFree() == true) roll else null }.toList()
+        val removedRolls = (0..<rolls.size).filter { isFree(it) }.toList()
 
-        rolls.replaceAll{if (removedRolls.contains(it)) null else it}
-
-        removedRolls.forEach { it.remove() }
+        removedRolls.forEach { rolls[it] = GridLocationType.NOTHING }
 
         return removedRolls.size.toULong()
-    }
-
-    fun removePrevious() {
-        if (previous != null) {
-            val removedNeighbourTypes = listOf(NeighbourType.LEFT_UP, NeighbourType.UP, NeighbourType.RIGHT_UP)
-
-            for (rollIndex in 0..<rolls.size) {
-                for (removedNeighbourType in removedNeighbourTypes) {
-                    val roll = rolls[rollIndex]
-                    val neighbour = removedNeighbourType.rollGetter(this, rollIndex)
-
-                    if (roll != null && neighbour != null) {
-                        roll.removeNeighbour(removedNeighbourType, neighbour)
-                    }
-                }
-            }
-
-            previous = null
-        }
     }
 
     fun setNext(value: GridLine) {
         if (next == null) {
             next = value
             value.previous = this
-
-            val addedNeighbourTypes = listOf(NeighbourType.LEFT_DOWN, NeighbourType.DOWN, NeighbourType.RIGHT_DOWN)
-
-            for (rollIndex in 0..<rolls.size) {
-                for (addedNeighbourType in addedNeighbourTypes) {
-                    val roll = rolls[rollIndex]
-                    val neighbour = addedNeighbourType.rollGetter(this, rollIndex)
-
-                    if (roll != null && neighbour != null) {
-                        roll.setNeighbour(addedNeighbourType, neighbour)
-                    }
-                }
-            }
         }
     }
 
@@ -93,6 +57,10 @@ class GridLine(previousGL: GridLine? = null) {
     }
 
     override fun toString(): String {
-        return rolls.joinToString("") { if (it == null) "." else if (it.isFree()) "x" else "@" }
+        return (0..<rolls.size).joinToString("") {
+            if (isFree(it)) "x"
+            else if (rolls[it] == GridLocationType.NOTHING) "."
+            else "@"
+        }
     }
 }
