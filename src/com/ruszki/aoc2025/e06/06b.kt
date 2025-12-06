@@ -30,7 +30,20 @@ package com.ruszki.aoc2025.e06
  */
 
 fun main() {
-    val mathHomework = MathHomework.load("src/input/06.txt", {numbers, numberString -> numbers.add(numberString.toULong())})
+    val mathHomework = MathHomework.load("src/input/06.txt",
+        {numbers, numberString ->
+            numberString.forEachIndexed { index, digitChar -> if (digitChar.isDigit()) {
+                val digit = digitChar.digitToInt().toULong()
+
+                if (numbers.isEmpty()) {
+                    repeat(numberString.length) {
+                        numbers.add(0uL)
+                    }
+                }
+
+                numbers[index] = numbers[index] * 10uL + digit
+            }}
+        })
 
     println("The sum of results is ${mathHomework.result()}")
 }
