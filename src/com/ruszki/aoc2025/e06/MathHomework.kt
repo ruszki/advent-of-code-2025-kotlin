@@ -25,7 +25,7 @@ class MathHomework {
     }
 
     companion object {
-        fun load(pathString: String): MathHomework {
+        fun load(pathString: String, numberAdder: (MutableList<ULong>, String) -> Unit): MathHomework {
             val mathHomework = MathHomework()
 
             val operators = ProblemType.entries.associateBy { it.separator }
@@ -44,7 +44,7 @@ class MathHomework {
 
                     if (values.isNotEmpty() && values[0].matches(Regex("\\d+"))) {
                         values.forEachIndexed { index, value ->
-                            mathHomework.problems[index].addNumber(value.toULong())
+                            mathHomework.problems[index].addNumber(value, numberAdder)
                         }
                     } else {
                         values.forEachIndexed { index, value ->

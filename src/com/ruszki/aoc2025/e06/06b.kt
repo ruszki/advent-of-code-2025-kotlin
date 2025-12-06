@@ -1,7 +1,5 @@
 package com.ruszki.aoc2025.e06
 
-import com.ruszki.aoc2025.e05.Inventory
-
 /*
     Solution to https://adventofcode.com/2025/day/6#part2
 
@@ -32,7 +30,7 @@ import com.ruszki.aoc2025.e05.Inventory
  */
 
 fun main() {
-    val inventory = Inventory.load("src/input/05.txt")
+    val mathHomework = MathHomework.load("src/input/06.txt", {numbers, numberString -> numbers.add(numberString.toULong())})
 
-    println("There are ${inventory.freshRangeCount} fresh ingredients in the range of ingredient IDs")
+    println("The sum of results is ${mathHomework.result()}")
 }
