@@ -1,5 +1,9 @@
 package com.ruszki.aoc2025.e06
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.use
+
 class MathHomework {
     private val problems = mutableListOf<Problem>()
 
@@ -16,32 +20,34 @@ class MathHomework {
     }
 
     companion object {
-        fun load(): MathHomework {
+        fun load(pathString: String): MathHomework {
             val mathHomework = MathHomework()
 
-            val problem1 = mathHomework.addProblem()
-            problem1.problemType = ProblemType.MULTIPLICATION
-            problem1.addNumber(123uL)
-            problem1.addNumber(45uL)
-            problem1.addNumber(6uL)
+            val operators = ProblemType.entries.associateBy { it.separator }
 
-            val problem2 = mathHomework.addProblem()
-            problem2.problemType = ProblemType.ADDITION
-            problem2.addNumber(328uL)
-            problem2.addNumber(64uL)
-            problem2.addNumber(98uL)
+            val path = Paths.get(pathString)
 
-            val problem3 = mathHomework.addProblem()
-            problem3.problemType = ProblemType.MULTIPLICATION
-            problem3.addNumber(51uL)
-            problem3.addNumber(387uL)
-            problem3.addNumber(215uL)
+            Files.lines(path).use { lines ->
+                lines.forEach { line ->
+                    val values = line.split(Regex("\\s+")).filter { it.isNotBlank() }
 
-            val problem4 = mathHomework.addProblem()
-            problem4.problemType = ProblemType.ADDITION
-            problem4.addNumber(64uL)
-            problem4.addNumber(23uL)
-            problem4.addNumber(314uL)
+                    if (values.size > mathHomework.problems.size) {
+                        repeat(values.size - mathHomework.problems.size) {
+                            mathHomework.addProblem()
+                        }
+                    }
+
+                    if (values.isNotEmpty() && values[0].matches(Regex("\\d+"))) {
+                        values.forEachIndexed { index, value ->
+                            mathHomework.problems[index].addNumber(value.toULong())
+                        }
+                    } else {
+                        values.forEachIndexed { index, value ->
+                            mathHomework.problems[index].problemType = operators[value]!!
+                        }
+                    }
+                }
+            }
 
             return mathHomework
         }
