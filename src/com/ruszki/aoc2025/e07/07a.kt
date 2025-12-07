@@ -135,5 +135,11 @@ package com.ruszki.aoc2025.e07
  */
 
 fun main() {
-    println("There are no results yet")
+    val tl1 = TachyonLevel(15uL, emptyList(), 7uL)
+    val tl2 = TachyonLevel(15uL, listOf(7uL), null)
+    val tl3 = TachyonLevel(15uL, listOf(6uL, 8uL), null)
+
+    println("Used beams for tl1: ${tl1.addIncomingBeams(emptyList())}")
+    println("Used beams for tl2: ${tl2.addIncomingBeams(tl1.getBeams())}")
+    println("Used beams for tl3: ${tl3.addIncomingBeams(tl2.getBeams())}")
 }
