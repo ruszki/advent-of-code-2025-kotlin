@@ -79,5 +79,5 @@ package com.ruszki.aoc2025.e07
 fun main() {
     val tachyon = Tachyon.load("src/input/07.txt")
 
-    println("There are no answers yet")
+    println("There are ${tachyon.beamPossibilities} possible beams")
 }

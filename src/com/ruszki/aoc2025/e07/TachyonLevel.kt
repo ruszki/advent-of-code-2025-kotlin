@@ -1,37 +1,44 @@
 package com.ruszki.aoc2025.e07
 
 class TachyonLevel(val size: ULong, val splitters: List<ULong>, start: ULong? = null) {
-    private val beams = mutableSetOf<ULong>()
+    private val beams = mutableMapOf<ULong, ULong>()
 
     init {
         if (start != null) {
-            beams.add(start)
+            beams[start] = 1uL
         }
     }
 
-    fun getBeams(): Iterable<ULong> {
+    fun getBeams(): Map<ULong, ULong> {
         return beams
+    }
+
+    private fun addBeam(beamIndex: ULong, beamPossibilities: ULong) {
+        beams[beamIndex] = beams.getOrDefault(beamIndex, 0uL) + beamPossibilities
     }
 
     /**
      * Returns the number of used splitters
      */
-    fun addIncomingBeams(incomingBeams: Iterable<ULong>): ULong {
+    fun addIncomingBeams(incomingBeams: Map<ULong, ULong>): ULong {
         var usedSplitterCount = 0uL
 
         for (beam in incomingBeams) {
-            if (splitters.contains(beam)) {
+            val beamIndex = beam.key
+            val beamPossibilities = beam.value
+
+            if (splitters.contains(beamIndex)) {
                 usedSplitterCount++
 
-                if (beam - 1uL >= 0uL) {
-                    beams.add(beam - 1uL)
+                if (beamIndex - 1uL >= 0uL) {
+                    addBeam(beamIndex - 1uL, beamPossibilities)
                 }
 
-                if (beam + 1uL < size) {
-                    beams.add(beam + 1uL)
+                if (beamIndex + 1uL < size) {
+                    addBeam(beamIndex + 1uL, beamPossibilities)
                 }
             } else {
-                beams.add(beam)
+                addBeam(beamIndex, beamPossibilities)
             }
         }
 

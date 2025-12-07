@@ -4,7 +4,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.use
 
-class Tachyon(val usedSplitters: ULong) {
+class Tachyon(val usedSplitters: ULong, val beamPossibilities: ULong) {
     companion object {
         fun load(pathString: String): Tachyon {
             var usedSplitters = 0uL
@@ -28,14 +28,16 @@ class Tachyon(val usedSplitters: ULong) {
 
                         val currentTachyonLevel = TachyonLevel(size, splitters, startIndex)
 
-                        usedSplitters += currentTachyonLevel.addIncomingBeams(previousTachyonLevel?.getBeams() ?: emptyList())
+                        usedSplitters += currentTachyonLevel.addIncomingBeams(previousTachyonLevel?.getBeams() ?: emptyMap())
 
                         previousTachyonLevel = currentTachyonLevel
                     }
                 }
             }
 
-            return Tachyon(usedSplitters)
+            val beamPossibilities = previousTachyonLevel?.getBeams()?.values?.sum() ?: 0uL
+
+            return Tachyon(usedSplitters, beamPossibilities)
         }
     }
 }
