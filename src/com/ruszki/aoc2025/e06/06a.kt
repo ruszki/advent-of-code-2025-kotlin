@@ -1,7 +1,5 @@
 package com.ruszki.aoc2025.e06
 
-import com.ruszki.aoc2025.e05.Inventory
-
 /*
     Solution to https://adventofcode.com/2025/day/6
 
