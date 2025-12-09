@@ -74,11 +74,11 @@ fun main() {
 
     println(decoration)
 
-    decoration.connect(jb1, jb3)
+    decoration.connectNext()
 
     println(decoration)
 
-    decoration.connect(jb1, jb2)
+    decoration.connectNext()
 
     println(decoration)
 }

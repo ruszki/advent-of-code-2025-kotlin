@@ -7,9 +7,39 @@ class Decoration {
         junctionBoxMap[jb] = junctionBoxMap.values.maxOrNull()?.plus(1uL) ?: 0uL
     }
 
-    fun connect(jbA: JunctionBox, jbB: JunctionBox) {
-        val circuitIdA = junctionBoxMap[jbA] ?: return
-        val circuitIdB = junctionBoxMap[jbB] ?: return
+    fun connectNext() {
+        if (getCircuits().size <= 1) {
+            return
+        }
+
+        var minimumDistance = Double.MAX_VALUE
+        var minimumJunctionBoxA: JunctionBox? = null
+        var minimumJunctionBoxB: JunctionBox? = null
+
+        val junctionBoxList = junctionBoxMap.keys.toList()
+
+        for (i in 0..junctionBoxList.lastIndex) {
+            for (j in i + 1..junctionBoxList.lastIndex) {
+                val junctionBoxA = junctionBoxList[i]
+                val junctionBoxB = junctionBoxList[j]
+
+                val circuitIdA = junctionBoxMap[junctionBoxA]
+                val circuitIdB = junctionBoxMap[junctionBoxB]
+
+                if (circuitIdA != circuitIdB) {
+                    val distance = junctionBoxA.position.distanceTo(junctionBoxB.position)
+
+                    if (distance < minimumDistance) {
+                        minimumDistance = distance
+                        minimumJunctionBoxA = junctionBoxA
+                        minimumJunctionBoxB = junctionBoxB
+                    }
+                }
+            }
+        }
+
+        val circuitIdA = junctionBoxMap[minimumJunctionBoxA] ?: return
+        val circuitIdB = junctionBoxMap[minimumJunctionBoxB] ?: return
 
         if (circuitIdA < circuitIdB) {
             junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdB) circuitIdA else oldCircuitId }
