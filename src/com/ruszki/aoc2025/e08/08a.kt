@@ -58,5 +58,27 @@ package com.ruszki.aoc2025.e08
  */
 
 fun main() {
-    println("No results are available yet")
+    val p1 = Position.fromString("162,817,812")
+    val p2 = Position.fromString("431,825,988")
+    val p3 = Position.fromString("425,690,689")
+
+    val jb1 = JunctionBox(p1)
+    val jb2 = JunctionBox(p2)
+    val jb3 = JunctionBox(p3)
+
+    val decoration = Decoration()
+
+    decoration.addJunctionBox(jb1)
+    decoration.addJunctionBox(jb2)
+    decoration.addJunctionBox(jb3)
+
+    println(decoration)
+
+    decoration.connect(jb1, jb3)
+
+    println(decoration)
+
+    decoration.connect(jb1, jb2)
+
+    println(decoration)
 }
