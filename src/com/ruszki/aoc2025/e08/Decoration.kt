@@ -27,10 +27,7 @@ class Decoration {
                 val junctionBoxA = junctionBoxList[i]
                 val junctionBoxB = junctionBoxList[j]
 
-                val circuitIdA = junctionBoxMap[junctionBoxA]
-                val circuitIdB = junctionBoxMap[junctionBoxB]
-
-                if (circuitIdA != circuitIdB) {
+                if (!junctionBoxA.isConnectedTo(junctionBoxB)) {
                     val distance = junctionBoxA.position.distanceTo(junctionBoxB.position)
 
                     if (distance < minimumDistance) {
@@ -42,13 +39,17 @@ class Decoration {
             }
         }
 
-        val circuitIdA = junctionBoxMap[minimumJunctionBoxA] ?: return
-        val circuitIdB = junctionBoxMap[minimumJunctionBoxB] ?: return
+        if (minimumJunctionBoxA != null && minimumJunctionBoxB != null) {
+            val circuitIdA = junctionBoxMap[minimumJunctionBoxA]!!
+            val circuitIdB = junctionBoxMap[minimumJunctionBoxB]!!
 
-        if (circuitIdA < circuitIdB) {
-            junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdB) circuitIdA else oldCircuitId }
-        } else if (circuitIdA > circuitIdB) {
-            junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdA) circuitIdB else oldCircuitId }
+            minimumJunctionBoxA.addConnection(minimumJunctionBoxB)
+
+            if (circuitIdA < circuitIdB) {
+                junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdB) circuitIdA else oldCircuitId }
+            } else if (circuitIdA > circuitIdB) {
+                junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdA) circuitIdB else oldCircuitId }
+            }
         }
     }
 

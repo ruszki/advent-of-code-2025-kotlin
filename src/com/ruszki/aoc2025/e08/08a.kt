@@ -60,8 +60,7 @@ package com.ruszki.aoc2025.e08
 fun main() {
     val decoration = Decoration.load("src/input/08.txt")
 
-    repeat(9) { // When the exercise states "make the X shortest connections", we need to use one less, because
-        // it means the number of connected junction boxes and not connections
+    repeat(10) {
         decoration.connectNext()
     }
 
