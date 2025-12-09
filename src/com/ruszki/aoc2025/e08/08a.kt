@@ -60,7 +60,7 @@ package com.ruszki.aoc2025.e08
 fun main() {
     val decoration = Decoration.load("src/input/08.txt")
 
-    repeat(10) {
+    repeat(1000) {
         decoration.connectNext()
     }
 
