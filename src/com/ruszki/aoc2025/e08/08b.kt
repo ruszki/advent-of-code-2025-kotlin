@@ -14,5 +14,15 @@ package com.ruszki.aoc2025.e08
  */
 
 fun main() {
-    println("There are no answers yet")
+    val decoration = Decoration.load("src/input/08.txt")
+
+    var lastConnection: Pair<JunctionBox, JunctionBox>? = null
+
+    while (decoration.getCircuits().size > 1) {
+        lastConnection = decoration.connectNext()
+    }
+
+    println("Multiply of the last two connected junction boxes' X coordinates: ${
+        (lastConnection?.first?.position?.x ?: 0uL) * (lastConnection?.second?.position?.x ?: 0uL)
+    }")
 }
