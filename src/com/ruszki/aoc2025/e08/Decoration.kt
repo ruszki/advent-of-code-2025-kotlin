@@ -1,5 +1,9 @@
 package com.ruszki.aoc2025.e08
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.use
+
 class Decoration {
     val junctionBoxMap = mutableMapOf<JunctionBox, ULong>()
 
@@ -60,15 +64,44 @@ class Decoration {
         return circuitMap
     }
 
+    fun getCircuitSizeSum(count: Int): ULong {
+        val circuitMap =
+            getCircuits().values.toList().sortedWith { jbListA, jbListB -> jbListB.size.compareTo(jbListA.size) } // Reversed order -> Descending order
+
+        return (0..<count)
+            .map { circuitMap.getOrElse(it, { _ -> emptyList() }).size }
+            .reduce { a, b -> a * b }
+            .toULong()
+    }
+
     override fun toString(): String {
         val circuitMap = getCircuits()
 
         if (circuitMap.isEmpty()) {
             return "There are no circuits"
         } else {
-            return "Circuits:\n" + circuitMap.entries.joinToString("\n") { "  - ${it.key}: ${it.value.joinToString (", ")}" }
+            return "Circuits (sum of largest circuits' size ${getCircuitSizeSum(3)}):\n" + circuitMap.entries.joinToString("\n") { "  - ${it.key}: ${it.value.joinToString(", ")}" }
         }
     }
 
+    companion object {
+        fun load(pathString: String): Decoration {
+            val decoration = Decoration()
 
+            val path = Paths.get(pathString)
+
+            Files.lines(path).use { lines ->
+                lines.forEach { line ->
+                    if (line.isNotEmpty()) {
+                        val position = Position.fromString(line.trim())
+                        val junctionBox = JunctionBox(position)
+
+                        decoration.addJunctionBox(junctionBox)
+                    }
+                }
+            }
+
+            return decoration
+        }
+    }
 }

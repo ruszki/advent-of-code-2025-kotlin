@@ -58,27 +58,12 @@ package com.ruszki.aoc2025.e08
  */
 
 fun main() {
-    val p1 = Position.fromString("162,817,812")
-    val p2 = Position.fromString("431,825,988")
-    val p3 = Position.fromString("425,690,689")
+    val decoration = Decoration.load("src/input/08.txt")
 
-    val jb1 = JunctionBox(p1)
-    val jb2 = JunctionBox(p2)
-    val jb3 = JunctionBox(p3)
-
-    val decoration = Decoration()
-
-    decoration.addJunctionBox(jb1)
-    decoration.addJunctionBox(jb2)
-    decoration.addJunctionBox(jb3)
-
-    println(decoration)
-
-    decoration.connectNext()
-
-    println(decoration)
-
-    decoration.connectNext()
+    repeat(9) { // When the exercise states "make the X shortest connections", we need to use one less, because
+        // it means the number of connected junction boxes and not connections
+        decoration.connectNext()
+    }
 
     println(decoration)
 }
