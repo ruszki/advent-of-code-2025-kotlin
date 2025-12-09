@@ -11,9 +11,9 @@ class Decoration {
         junctionBoxMap[jb] = junctionBoxMap.values.maxOrNull()?.plus(1uL) ?: 0uL
     }
 
-    fun connectNext() {
+    fun connectNext(): Pair<JunctionBox, JunctionBox>? {
         if (getCircuits().size <= 1) {
-            return
+            return null
         }
 
         var minimumDistance = Double.MAX_VALUE
@@ -50,7 +50,11 @@ class Decoration {
             } else if (circuitIdA > circuitIdB) {
                 junctionBoxMap.replaceAll { _, oldCircuitId -> if (oldCircuitId == circuitIdA) circuitIdB else oldCircuitId }
             }
+
+            return Pair(minimumJunctionBoxA, minimumJunctionBoxB)
         }
+
+        return null
     }
 
     fun getCircuits(): Map<ULong, List<JunctionBox>> {
