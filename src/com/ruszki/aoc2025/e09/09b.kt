@@ -78,5 +78,7 @@ package com.ruszki.aoc2025.e09
 */
 
 fun main() {
-    println("There are no results yet")
+    val tileFloor = TileFloor.load("src/input/09.txt")
+
+    println("Maximum area of rectangle spanned by red tiles: ${tileFloor.getMaximumRedAndGreenRectangle()}")
 }

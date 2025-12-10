@@ -1,19 +1,17 @@
 package com.ruszki.aoc2025.e09
 
-import kotlin.math.abs
+class RedTile(val x: ULong, val y: ULong) {
+    var previous: RedTile = this
+    var next: RedTile = this
 
-data class RedTile(val x: ULong, val y: ULong) {
     fun areaOfSpannedRectangle(other: RedTile): ULong {
-        return (uLongAbs(x, other.x) + 1uL) * (uLongAbs(y, other.y) + 1uL)
+        return (ULongUtils.difference(x, other.x) + 1uL) * (ULongUtils.difference(y, other.y) + 1uL)
     }
 
-    private fun uLongAbs(a : ULong, b :ULong): ULong {
-        if (a > b) {
-            return a - b
-        } else {
-            return b - a
-        }
+    override fun toString(): String {
+        return "($x, $y)"
     }
+
 
     companion object {
         fun from(s: String): RedTile {

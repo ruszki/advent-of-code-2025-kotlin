@@ -8,6 +8,17 @@ class TileFloor {
     private val redTiles = mutableListOf<RedTile>()
 
     fun addRedTile(tile: RedTile) {
+        val previous = redTiles.lastOrNull()
+        val next = redTiles.firstOrNull()
+
+        if (previous != null && next != null) {
+            next.previous = tile
+            previous.next = tile
+
+            tile.previous = previous
+            tile.next = next
+        }
+
         redTiles.add(tile)
     }
 
@@ -29,6 +40,15 @@ class TileFloor {
 
         return maxArea
     }
+
+    fun getMaximumRedAndGreenRectangle(): ULong {
+        val compressedTileFloor = CompressedTileFloor(redTiles)
+
+        val (rectangleCornerA, rectangleCornerB) = compressedTileFloor.getLargestGreenAndRedRectangle() ?: Pair(null, null)
+
+        return if (rectangleCornerA != null && rectangleCornerB != null) rectangleCornerA.areaOfSpannedRectangle(rectangleCornerB) else 0uL
+    }
+
 
     companion object {
         fun load(pathString: String): TileFloor {
