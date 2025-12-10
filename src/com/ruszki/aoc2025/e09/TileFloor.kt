@@ -1,5 +1,9 @@
 package com.ruszki.aoc2025.e09
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.use
+
 class TileFloor {
     private val redTiles = mutableListOf<RedTile>()
 
@@ -24,5 +28,25 @@ class TileFloor {
         }
 
         return maxArea
+    }
+
+    companion object {
+        fun load(pathString: String): TileFloor {
+            val tileFloor = TileFloor()
+
+            val path = Paths.get(pathString)
+
+            Files.lines(path).use { lines ->
+                lines.forEach { line ->
+                    if (line.isNotBlank()) {
+                        val redTile = RedTile.from(line)
+
+                        tileFloor.addRedTile(redTile)
+                    }
+                }
+            }
+
+            return tileFloor
+        }
     }
 }

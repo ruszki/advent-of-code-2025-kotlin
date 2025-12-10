@@ -86,25 +86,7 @@ package com.ruszki.aoc2025.e09
  */
 
 fun main() {
-    val tileFloor = TileFloor()
-
-    val rd1 = RedTile.from("7,1")
-    val rd2 = RedTile.from("11,1")
-    val rd3 = RedTile.from("11,7")
-    val rd4 = RedTile.from("9,7")
-    val rd5 = RedTile.from("9,5")
-    val rd6 = RedTile.from("2,5")
-    val rd7 = RedTile.from("2,3")
-    val rd8 = RedTile.from("7,3")
-
-    tileFloor.addRedTile(rd1)
-    tileFloor.addRedTile(rd2)
-    tileFloor.addRedTile(rd3)
-    tileFloor.addRedTile(rd4)
-    tileFloor.addRedTile(rd5)
-    tileFloor.addRedTile(rd6)
-    tileFloor.addRedTile(rd7)
-    tileFloor.addRedTile(rd8)
+    val tileFloor = TileFloor.load("src/input/09.txt")
 
     println("Maximum area of rectangle spanned by red tiles: ${tileFloor.getMaximumRedRectangle()}")
 }
