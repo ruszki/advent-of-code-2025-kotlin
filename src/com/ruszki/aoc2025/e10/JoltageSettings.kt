@@ -1,8 +1,8 @@
 package com.ruszki.aoc2025.e10
 
 class JoltageSettings(val joltage: List<ULong>): Comparable<JoltageSettings> {
-    fun applyButton(button: Button): JoltageSettings {
-        val newJoltage = joltage.mapIndexed { index, j -> if (button.switches.contains(index.toULong())) j + 1uL else j }
+    fun applyButton(button: Button, times: ULong): JoltageSettings {
+        val newJoltage = joltage.mapIndexed { index, j -> if (button.switches.contains(index.toULong())) j + times else j }
 
         return JoltageSettings(newJoltage)
     }

@@ -37,8 +37,9 @@ class Machine(
     fun getRequiredButtonPressesForJoltage(): ULong {
         print("$this: ")
         var fewestButtonPress = ULong.MAX_VALUE
+        var fewestButtonPressList = emptyList<Pair<Button, ULong>>()
         val initialJoltageSettings = JoltageSettings(List(joltageRequirements.joltage.size) { 0uL })
-        val initialMachineSettings = MachineSettings(initialJoltageSettings, buttons, 0uL)
+        val initialMachineSettings = MachineSettings(initialJoltageSettings, buttons, 0uL, emptyList())
 
         var currentSettings = listOf(initialMachineSettings)
         var nextSettings = mutableListOf<MachineSettings>()
@@ -69,6 +70,7 @@ class Machine(
                 if (currentIndex < 0) {
                     if (fewestButtonPress > currentSetting.buttonPresses) {
                         fewestButtonPress = currentSetting.buttonPresses
+                        fewestButtonPressList = currentSetting.buttonPressList
                     }
 
                     continue
@@ -87,13 +89,16 @@ class Machine(
 
                 for (possibleButtonPress in possibleButtonPressList) {
                     var newSetting = currentSetting.joltage
+                    val newButtonPressList = currentSetting.buttonPressList.toMutableList()
 
                     possibleButtonPress.forEachIndexed { buttonIndex, buttonPressCount ->
                         val currentButton = currentButtons[buttonIndex]
 
-                        repeat(buttonPressCount) {
-                            newSetting = newSetting.applyButton(currentButton)
+                        if (buttonPressCount > 0) {
+                            newSetting = newSetting.applyButton(currentButton, buttonPressCount.toULong())
+                            newButtonPressList.add(Pair(currentButton, buttonPressCount.toULong()))
                         }
+
                     }
 
                     if (newSetting > joltageRequirements) {
@@ -101,7 +106,7 @@ class Machine(
                     } else {
                         val newButtons = currentSetting.buttons.filter { !it.switches.contains(currentIndex.toULong()) }.toList()
 
-                        nextSettings.add(MachineSettings(newSetting, newButtons, newButtonPresses))
+                        nextSettings.add(MachineSettings(newSetting, newButtons, newButtonPresses, newButtonPressList))
                     }
                 }
             }
@@ -110,12 +115,12 @@ class Machine(
             nextSettings = mutableListOf()
         }
 
-        println(fewestButtonPress)
+        println("${fewestButtonPressList.joinToString("-") { "<${it.second}>(${it.first})" }}: $fewestButtonPress")
 
         return fewestButtonPress
     }
 
-    private data class MachineSettings(val joltage: JoltageSettings, val buttons: List<Button>, val buttonPresses: ULong)
+    private data class MachineSettings(val joltage: JoltageSettings, val buttons: List<Button>, val buttonPresses: ULong, val buttonPressList: List<Pair<Button, ULong>>)
 
     override fun toString(): String {
         return "[$requiredLightBoardSetting] ${buttons.joinToString(" ") { "($it)" }} {$joltageRequirements}"
