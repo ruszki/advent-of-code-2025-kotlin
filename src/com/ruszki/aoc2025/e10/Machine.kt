@@ -5,8 +5,6 @@ class Machine(
     val buttons: List<Button>,
     val joltageRequirements: List<ULong>
 ) {
-    val currentLightBoardSetting = LightBoardSetting(MutableList(requiredLightBoardSetting.lights.size) { false })
-
     fun getFewestButtonPress(): ULong {
         var fewestButtonPressCounter = 0uL
         val initialLightBoardSetting = LightBoardSetting(MutableList(requiredLightBoardSetting.lights.size) { false })
@@ -35,7 +33,7 @@ class Machine(
     }
 
     override fun toString(): String {
-        return "[$currentLightBoardSetting]->[$requiredLightBoardSetting] ${buttons.joinToString(" ") { "($it)" }} {${
+        return "[$requiredLightBoardSetting] ${buttons.joinToString(" ") { "($it)" }} {${
             joltageRequirements.joinToString(
                 ","
             )
