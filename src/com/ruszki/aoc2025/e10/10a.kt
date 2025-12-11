@@ -57,7 +57,7 @@ package com.ruszki.aoc2025.e10
  */
 
 fun main() {
-    val m1 = Machine.from("[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}")
+    val factory = Factory.load("src/input/10.txt")
 
-    println("Machine 1: $m1")
+    println("The Factory:\n$factory")
 }
