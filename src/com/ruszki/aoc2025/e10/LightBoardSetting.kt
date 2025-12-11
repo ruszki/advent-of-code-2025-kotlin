@@ -1,12 +1,12 @@
 package com.ruszki.aoc2025.e10
 
-class LightBoardSetting(private val lights: MutableList<Boolean>) {
-    fun getLights(): List<Boolean> = lights
+class LightBoardSetting(val lights: List<Boolean>) {
+    fun applyButton(button: Button): LightBoardSetting {
+        val newLights = lights.toMutableList()
 
-    fun applyButton(button: Button) {
-        button.switchedLights.forEach {
-            lights[it.toInt()] = !lights[it.toInt()]
-        }
+        button.switchedLights.forEach { newLights[it.toInt()] = !newLights[it.toInt()] }
+
+        return LightBoardSetting(newLights)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -5,7 +5,34 @@ class Machine(
     val buttons: List<Button>,
     val joltageRequirements: List<ULong>
 ) {
-    val currentLightBoardSetting = LightBoardSetting(MutableList(requiredLightBoardSetting.getLights().size) { false })
+    val currentLightBoardSetting = LightBoardSetting(MutableList(requiredLightBoardSetting.lights.size) { false })
+
+    fun getFewestButtonPress(): ULong {
+        var fewestButtonPressCounter = 0uL
+        val initialLightBoardSetting = LightBoardSetting(MutableList(requiredLightBoardSetting.lights.size) { false })
+
+        var currentSettings = mutableListOf(initialLightBoardSetting)
+        var nextSettings = mutableListOf<LightBoardSetting>()
+
+        while (true) {
+            fewestButtonPressCounter += 1uL
+
+            for (currentSetting in currentSettings) {
+                for (button in buttons) {
+                    val newSetting = currentSetting.applyButton(button)
+
+                    if (newSetting == requiredLightBoardSetting) {
+                        return fewestButtonPressCounter
+                    } else {
+                        nextSettings.add(newSetting)
+                    }
+                }
+            }
+
+            currentSettings = nextSettings
+            nextSettings = mutableListOf()
+        }
+    }
 
     override fun toString(): String {
         return "[$currentLightBoardSetting]->[$requiredLightBoardSetting] ${buttons.joinToString(" ") { "($it)" }} {${
@@ -42,8 +69,8 @@ class Machine(
             require(buttons.isNotEmpty())
             require(requiredLightBoardSetting != null)
             require(joltageRequirements != null)
-            require(joltageRequirements.size == requiredLightBoardSetting.getLights().size)
-            require(buttons.none { it.switchedLights.max().toInt() >= requiredLightBoardSetting.getLights().size })
+            require(joltageRequirements.size == requiredLightBoardSetting.lights.size)
+            require(buttons.none { it.switchedLights.max().toInt() >= requiredLightBoardSetting.lights.size })
 
             return Machine(requiredLightBoardSetting, buttons, joltageRequirements)
         }
