@@ -57,5 +57,7 @@ package com.ruszki.aoc2025.e10
  */
 
 fun main() {
-    println("There are no answers yet.")
+    val m1 = Machine.from("[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}")
+
+    println("Machine 1: $m1")
 }
