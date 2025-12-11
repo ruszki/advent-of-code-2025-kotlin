@@ -5,8 +5,12 @@ import java.nio.file.Paths
 import kotlin.use
 
 class Factory(val machines: List<Machine>) {
-    fun getFewestButtonPressesSum(): ULong {
-        return machines.sumOf { it.getFewestButtonPress() }
+    fun getRequiredButtonPressesForOnlineSum(): ULong {
+        return machines.sumOf { it.getRequiredButtonPressesForOnline() }
+    }
+
+    fun getRequiredButtonPressesForJoltageSum(): ULong {
+        return machines.sumOf { it.getRequiredButtonPressesForJoltage() }
     }
 
     override fun toString(): String {

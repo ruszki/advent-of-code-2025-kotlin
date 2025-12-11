@@ -40,5 +40,5 @@ package com.ruszki.aoc2025.e10
 fun main() {
     val factory = Factory.load("src/input/10.txt")
 
-    println("The Factory:\n$factory")
+    println("The fewest button presses required for joltage: ${factory.getRequiredButtonPressesForJoltageSum()}")
 }

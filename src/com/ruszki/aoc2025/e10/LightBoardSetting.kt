@@ -2,9 +2,9 @@ package com.ruszki.aoc2025.e10
 
 class LightBoardSetting(val lights: List<Boolean>) {
     fun applyButton(button: Button): LightBoardSetting {
-        val newLights = lights.toMutableList()
-
-        button.switchedLights.forEach { newLights[it.toInt()] = !newLights[it.toInt()] }
+        val newLights =
+            lights.mapIndexed { index, light -> if (button.switches.contains(index.toULong())) !light else light }
+                .toList()
 
         return LightBoardSetting(newLights)
     }
@@ -26,7 +26,7 @@ class LightBoardSetting(val lights: List<Boolean>) {
 
     companion object {
         fun from(lightBoardString: String): LightBoardSetting {
-            val lights = lightBoardString.map { '#' == it }.toMutableList()
+            val lights = lightBoardString.map { '#' == it }.toList()
 
             return LightBoardSetting(lights)
         }

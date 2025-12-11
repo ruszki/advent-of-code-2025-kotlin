@@ -61,5 +61,5 @@ fun main() {
 
     println("The Factory:\n$factory")
 
-    println("The fewest button presses required: ${factory.getFewestButtonPressesSum()}")
+    println("The fewest button presses required for online: ${factory.getRequiredButtonPressesForOnlineSum()}")
 }

@@ -1,8 +1,8 @@
 package com.ruszki.aoc2025.e10
 
-class Button(val switchedLights: Set<ULong>) {
+class Button(val switches: Set<ULong>) {
     override fun toString(): String {
-        return switchedLights.joinToString(",")
+        return switches.joinToString(",")
     }
 
     companion object {
