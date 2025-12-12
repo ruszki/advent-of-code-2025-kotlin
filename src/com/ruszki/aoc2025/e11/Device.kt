@@ -1,8 +1,11 @@
 package com.ruszki.aoc2025.e11
 
-class Device(private val name: String) {
+class Device(val name: String) {
     val isYou = name == "you"
     val isOut = name == "out"
+    val isSvr = name == "svr"
+    val isDac = name == "dac"
+    val isFft = name == "fft"
 
     private val outputs = mutableSetOf<Device>()
 
