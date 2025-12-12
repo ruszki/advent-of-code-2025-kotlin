@@ -1,10 +1,8 @@
 package com.ruszki.aoc2025.e11
 
 class Device(private val name: String) {
-    var connectedToOutput: Boolean = false
-        private set
-
     val isYou = name == "you"
+    val isOut = name == "out"
 
     private val outputs = mutableSetOf<Device>()
 
@@ -17,11 +15,7 @@ class Device(private val name: String) {
     }
 
     override fun toString(): String {
-        return "${name}: ${if (connectedToOutput) "out${if (outputs.isNotEmpty()) " " else ""}" else ""}${
-            outputs.joinToString(
-                " "
-            ) { it.name }
-        }"
+        return "${name}: ${outputs.joinToString(" ") { it.name }}"
     }
 
     companion object {
@@ -34,12 +28,7 @@ class Device(private val name: String) {
 
             val deviceNames = parts[1].split(" ")
 
-            for (deviceName in deviceNames) {
-                if (deviceName == "out") {
-                    device.connectedToOutput = true
-                } else {
-                    device.addOutput(devices.computeIfAbsent(deviceName) { Device(it) })
-                }
+            for (deviceName in deviceNames) {device.addOutput(devices.computeIfAbsent(deviceName) { Device(it) })
             }
         }
     }
