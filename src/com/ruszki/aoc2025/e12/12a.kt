@@ -97,5 +97,7 @@ import com.ruszki.aoc2025.e11.Reactor
  */
 
 fun main() {
-    println("There are no solutions yet")
+    val christmasTreeFarm = ChristmasTreeFarm.load("src/input/12.txt")
+
+    println(christmasTreeFarm)
 }
