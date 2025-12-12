@@ -17,7 +17,8 @@ class Reactor(val deviceList: List<Device>) {
         } else {
             val newVisitedDevices = visitedDevices.plus(currentDevice)
 
-            val routeCount = currentDevice.getOutputs().filter { it !in visitedDevices }.sumOf { getRouteCountFromYou(it, newVisitedDevices) }
+            val routeCount = currentDevice.getOutputs().filter { it !in visitedDevices }
+                .sumOf { getRouteCountFromYou(it, newVisitedDevices) }
 
             return routeCount
         }
