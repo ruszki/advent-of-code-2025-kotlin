@@ -48,5 +48,5 @@ package com.ruszki.aoc2025.e11
 fun main() {
     val reactor = Reactor.load("src/input/11.txt")
 
-    println(reactor)
+    println("Number of routes from you to reactor: ${reactor.getRouteCountFromYou()}")
 }

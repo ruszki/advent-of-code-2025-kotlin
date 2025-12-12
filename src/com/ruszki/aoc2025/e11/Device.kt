@@ -1,26 +1,24 @@
 package com.ruszki.aoc2025.e11
 
 class Device(private val name: String) {
-    var reactorRouteCount: ULong? = null
-        set(value) {
-            if (field == null) {
-                field = value
-            }
-        }
+    var connectedToOutput: Boolean = false
+        private set
 
-    private val output = mutableSetOf<Device>()
+    val isYou = name == "you"
+
+    private val outputs = mutableSetOf<Device>()
 
     fun addOutput(device: Device) {
-        output.add(device)
+        outputs.add(device)
     }
 
-    fun hasOutput(device: Device): Boolean {
-        return output.contains(device)
+    fun getOutputs(): Set<Device> {
+        return outputs
     }
 
     override fun toString(): String {
-        return "${name}: ${if (reactorRouteCount == 1uL) "out${if (output.isNotEmpty()) " " else ""}" else ""}${
-            output.joinToString(
+        return "${name}: ${if (connectedToOutput) "out${if (outputs.isNotEmpty()) " " else ""}" else ""}${
+            outputs.joinToString(
                 " "
             ) { it.name }
         }"
@@ -38,7 +36,7 @@ class Device(private val name: String) {
 
             for (deviceName in deviceNames) {
                 if (deviceName == "out") {
-                    device.reactorRouteCount = 1uL
+                    device.connectedToOutput = true
                 } else {
                     device.addOutput(devices.computeIfAbsent(deviceName) { Device(it) })
                 }
