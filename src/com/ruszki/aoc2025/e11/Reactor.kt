@@ -4,24 +4,12 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.use
 
-class Reactor(val deviceList: List<Device>) {
+class Reactor(val deviceList: Set<Device>) {
     fun getRouteCountFromYou(): ULong {
         val youDevice = deviceList.first { it.isYou }
+        val outDevice = deviceList.first { it.isOut }
 
-        return getRouteCountFromYou(youDevice, emptySet())
-    }
-
-    private fun getRouteCountFromYou(currentDevice: Device, visitedDevices: Set<Device>): ULong {
-        if (currentDevice.isOut) {
-            return 1uL
-        } else {
-            val newVisitedDevices = visitedDevices.plus(currentDevice)
-
-            val routeCount = currentDevice.getOutputs().filter { it !in visitedDevices }
-                .sumOf { getRouteCountFromYou(it, newVisitedDevices) }
-
-            return routeCount
-        }
+        return getRouteCount(deviceList, youDevice, outDevice)
     }
 
     fun getRouteCountFromSvrWithDacAndFft(): ULong {
@@ -41,6 +29,7 @@ class Reactor(val deviceList: List<Device>) {
         return svrToDacCount * dacToFftCount * fftToOutCount + svrToFftCount * fftToDacCount * dacToOutCount
     }
 
+    // We can use this easier algorithm for DAGs, because there is no cycle in our device graph
     private fun getRouteCount(devices: Set<Device>, start: Device, end: Device): ULong {
         val distanceMap = mutableMapOf<Device, ULong>()
 
@@ -75,7 +64,7 @@ class Reactor(val deviceList: List<Device>) {
                 }
             }
 
-            return Reactor(deviceMap.values.toList())
+            return Reactor(deviceMap.values.toSet())
         }
     }
 }
