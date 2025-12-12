@@ -46,20 +46,7 @@ package com.ruszki.aoc2025.e11
  */
 
 fun main() {
-    val aaa = Device("aaa")
-    val you = Device("you")
-    val hhh = Device("hhh")
-    val bbb = Device("bbb")
-    val eee = Device("eee")
-
-    aaa.addOutput(you)
-    aaa.addOutput(hhh)
-    you.addOutput(bbb)
-    bbb.addOutput(eee)
-
-    eee.reactorRouteCount = 1uL
-
-    val reactor = Reactor(listOf(aaa, you, hhh, bbb, eee))
+    val reactor = Reactor.load("src/input/11.txt")
 
     println(reactor)
 }

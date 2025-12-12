@@ -25,4 +25,24 @@ class Device(private val name: String) {
             ) { it.name }
         }"
     }
+
+    companion object {
+        fun from(line: String, devices: MutableMap<String, Device>) {
+            val parts = line.split(": ")
+
+            val name = parts[0]
+
+            val device = devices.computeIfAbsent(name, { Device(name)})
+
+            val deviceNames = parts[1].split(" ")
+
+            for (deviceName in deviceNames) {
+                if (deviceName == "out") {
+                    device.reactorRouteCount = 1uL
+                } else {
+                    device.addOutput(devices.computeIfAbsent(deviceName) { Device(it) })
+                }
+            }
+        }
+    }
 }
