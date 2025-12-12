@@ -1,6 +1,10 @@
 package com.ruszki.aoc2025.e10
 
 import java.math.BigInteger
+import java.util.Deque
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.concurrent.thread
 
 class Machine(
     val requiredLightBoardSetting: LightBoardSetting,
@@ -37,90 +41,203 @@ class Machine(
     fun getRequiredButtonPressesForJoltage(): ULong {
         print("$this: ")
         var fewestButtonPress = ULong.MAX_VALUE
-        var fewestButtonPressList = emptyList<Pair<Button, ULong>>()
         val initialJoltageSettings = JoltageSettings(List(joltageRequirements.joltage.size) { 0uL })
-        val initialMachineSettings = MachineSettings(initialJoltageSettings, buttons, 0uL, emptyList())
+        val initialMachineSettings = MachineSettings(initialJoltageSettings, buttons.sortedWith { a, b -> b.switches.size.compareTo(a.switches.size) }, 0uL)
 
-        var currentSettings = listOf(initialMachineSettings)
-        var nextSettings = mutableListOf<MachineSettings>()
+        var currentSettings: Collection<MachineSettings> = listOf(initialMachineSettings)
 
         while (currentSettings.isNotEmpty()) {
-            for (currentSetting in currentSettings) {
-                val currentRemainingJoltageList = currentSetting.joltage.joltage.mapIndexed { index, j -> joltageRequirements.joltage[index] - j }
-                val buttonCounts = currentSetting.joltage.joltage.mapIndexed { index, _ -> currentSetting.buttons.filter { it.switches.contains(index.toULong()) }.size.toULong() }
-                var currentIndex = -1
-                var minimumPossibility = BigInteger.ZERO
+            if (currentSettings.size < 10000) {
+                val response = processCurrentSettings(currentSettings, fewestButtonPress)
 
-                for (i in currentRemainingJoltageList.indices) {
-                    val currentRemainingVoltage = currentRemainingJoltageList[i]
-                    val currentButtonCount = buttonCounts[i]
+                currentSettings = response.first
+                fewestButtonPress = response.second
+            } else {
+                val responses = mutableListOf<MachineSettings>()
 
-                    if (currentRemainingVoltage != 0uL) {
-                        val elements = BigInteger.valueOf(currentRemainingVoltage.toLong() + currentButtonCount.toLong() - 1)
-                        val combinations = BigInteger.valueOf(currentButtonCount.toLong() - 1)
-                        val currentPossibility = factorial(elements).divide((factorial(combinations).multiply(factorial(elements - combinations))))
+                val threads = currentSettings.chunked(currentSettings.size / 32).map {
+                    thread {
+                        val response = processDFCurrentSettings(it, fewestButtonPress)
 
-                        if (currentIndex < 0 || minimumPossibility > currentPossibility) {
-                            currentIndex = i
-                            minimumPossibility = currentPossibility
+                        synchronized(responses) {
+                            responses.addAll(response.first)
+
+                            if (fewestButtonPress > response.second) {
+                                fewestButtonPress = response.second
+                            }
                         }
                     }
                 }
 
-                if (currentIndex < 0) {
-                    if (fewestButtonPress > currentSetting.buttonPresses) {
-                        fewestButtonPress = currentSetting.buttonPresses
-                        fewestButtonPressList = currentSetting.buttonPressList
-                    }
+                threads.forEach { it.join() }
 
-                    continue
-                }
-
-                val currentButtons = currentSetting.buttons.filter { it.switches.contains(currentIndex.toULong()) }.toList()
-                val remainingJoltage = joltageRequirements.joltage[currentIndex] - currentSetting.joltage.joltage[currentIndex]
-                val newButtonPresses = currentSetting.buttonPresses + remainingJoltage
-
-                if (currentButtons.isEmpty() || newButtonPresses > fewestButtonPress) {
-                    continue
-                }
-
-                val possibleButtonPressList = mutableListOf<List<Int>>()
-                fillPossibleButtonPressList(remainingJoltage.toInt(), 0, mutableListOf(), possibleButtonPressList, currentButtons.lastIndex)
-
-                for (possibleButtonPress in possibleButtonPressList) {
-                    var newSetting = currentSetting.joltage
-                    val newButtonPressList = currentSetting.buttonPressList.toMutableList()
-
-                    possibleButtonPress.forEachIndexed { buttonIndex, buttonPressCount ->
-                        val currentButton = currentButtons[buttonIndex]
-
-                        if (buttonPressCount > 0) {
-                            newSetting = newSetting.applyButton(currentButton, buttonPressCount.toULong())
-                            newButtonPressList.add(Pair(currentButton, buttonPressCount.toULong()))
-                        }
-
-                    }
-
-                    if (newSetting > joltageRequirements) {
-                        continue
-                    } else {
-                        val newButtons = currentSetting.buttons.filter { !it.switches.contains(currentIndex.toULong()) }.toList()
-
-                        nextSettings.add(MachineSettings(newSetting, newButtons, newButtonPresses, newButtonPressList))
-                    }
-                }
+                currentSettings = responses
             }
-
-            currentSettings = nextSettings
-            nextSettings = mutableListOf()
         }
 
-        println("${fewestButtonPressList.joinToString("-") { "<${it.second}>(${it.first})" }}: $fewestButtonPress")
+        println("$fewestButtonPress")
 
         return fewestButtonPress
     }
 
-    private data class MachineSettings(val joltage: JoltageSettings, val buttons: List<Button>, val buttonPresses: ULong, val buttonPressList: List<Pair<Button, ULong>>)
+    private fun processDFCurrentSettings(incomingSettings: Iterable<MachineSettings>, previousFewestButtonPress: ULong): Pair<List<MachineSettings>, ULong> {
+        var fewestButtonPress = previousFewestButtonPress
+
+        val currentSettings = incomingSettings.toMutableList()
+
+        while (currentSettings.isNotEmpty()) {
+            val currentSetting = currentSettings.removeLast()
+
+            val currentRemainingJoltageList =
+                currentSetting.joltage.joltage.mapIndexed { index, j -> joltageRequirements.joltage[index] - j }
+            val buttonCounts = currentSetting.joltage.joltage.mapIndexed { index, _ ->
+                currentSetting.buttons.filter {
+                    it.switches.contains(index.toULong())
+                }.size.toULong()
+            }
+            var currentIndex = -1
+            var minimumPossibility = BigInteger.ZERO
+
+            for (i in currentRemainingJoltageList.indices) {
+                val currentRemainingVoltage = currentRemainingJoltageList[i]
+                val currentButtonCount = buttonCounts[i]
+
+                if (currentRemainingVoltage != 0uL) {
+                    val elements =
+                        BigInteger.valueOf(currentRemainingVoltage.toLong() + currentButtonCount.toLong() - 1)
+                    val combinations = BigInteger.valueOf(currentButtonCount.toLong() - 1)
+                    val currentPossibility =
+                        factorial(elements).divide((factorial(combinations).multiply(factorial(elements - combinations))))
+
+                    if (currentIndex < 0 || minimumPossibility > currentPossibility) {
+                        currentIndex = i
+                        minimumPossibility = currentPossibility
+                    }
+                }
+            }
+
+            val currentButtons = currentSetting.buttons.filter { it.switches.contains(currentIndex.toULong()) }.toList()
+            val remainingJoltage =
+                joltageRequirements.joltage[currentIndex] - currentSetting.joltage.joltage[currentIndex]
+            val newButtonPresses = currentSetting.buttonPresses + remainingJoltage
+
+            if (currentButtons.isEmpty() || newButtonPresses > fewestButtonPress) {
+                continue
+            }
+
+            val possibleButtonPressList = mutableListOf<List<Int>>()
+            fillPossibleButtonPressList(
+                remainingJoltage.toInt(),
+                0,
+                mutableListOf(),
+                possibleButtonPressList,
+                currentButtons.lastIndex
+            )
+
+            val newButtons = currentSetting.buttons.filter { !it.switches.contains(currentIndex.toULong()) }.toList()
+
+            for (possibleButtonPress in possibleButtonPressList) {
+                var newSetting = currentSetting.joltage
+
+                possibleButtonPress.forEachIndexed { buttonIndex, buttonPressCount ->
+                    val currentButton = currentButtons[buttonIndex]
+
+                    if (buttonPressCount > 0) {
+                        newSetting = newSetting.applyButton(currentButton, buttonPressCount.toULong())
+                    }
+                }
+
+                if (newSetting == joltageRequirements) {
+                    if (fewestButtonPress > newButtonPresses) {
+                        fewestButtonPress = newButtonPresses
+                    }
+                } else if (newSetting < joltageRequirements && newButtons.isNotEmpty()) {
+                    currentSettings.add(MachineSettings(newSetting, newButtons, newButtonPresses))
+                }
+            }
+        }
+
+        return Pair(emptyList(), fewestButtonPress)
+    }
+
+    private fun processCurrentSettings(currentSettings: Iterable<MachineSettings>, previousFewestButtonPress: ULong): Pair<List<MachineSettings>, ULong> {
+        val returnSettings = mutableListOf<MachineSettings>()
+        var fewestButtonPress = previousFewestButtonPress
+
+        for (currentSetting in currentSettings) {
+            val currentRemainingJoltageList =
+                currentSetting.joltage.joltage.mapIndexed { index, j -> joltageRequirements.joltage[index] - j }
+            val buttonCounts = currentSetting.joltage.joltage.mapIndexed { index, _ ->
+                currentSetting.buttons.filter {
+                    it.switches.contains(index.toULong())
+                }.size.toULong()
+            }
+            var currentIndex = -1
+            var minimumPossibility = BigInteger.ZERO
+
+            for (i in currentRemainingJoltageList.indices) {
+                val currentRemainingVoltage = currentRemainingJoltageList[i]
+                val currentButtonCount = buttonCounts[i]
+
+                if (currentRemainingVoltage != 0uL) {
+                    val elements =
+                        BigInteger.valueOf(currentRemainingVoltage.toLong() + currentButtonCount.toLong() - 1)
+                    val combinations = BigInteger.valueOf(currentButtonCount.toLong() - 1)
+                    val currentPossibility =
+                        factorial(elements).divide((factorial(combinations).multiply(factorial(elements - combinations))))
+
+                    if (currentIndex < 0 || minimumPossibility > currentPossibility) {
+                        currentIndex = i
+                        minimumPossibility = currentPossibility
+                    }
+                }
+            }
+
+            val currentButtons = currentSetting.buttons.filter { it.switches.contains(currentIndex.toULong()) }.toList()
+            val remainingJoltage =
+                joltageRequirements.joltage[currentIndex] - currentSetting.joltage.joltage[currentIndex]
+            val newButtonPresses = currentSetting.buttonPresses + remainingJoltage
+
+            if (currentButtons.isEmpty() || newButtonPresses > fewestButtonPress) {
+                continue
+            }
+
+            val possibleButtonPressList = mutableListOf<List<Int>>()
+            fillPossibleButtonPressList(
+                remainingJoltage.toInt(),
+                0,
+                mutableListOf(),
+                possibleButtonPressList,
+                currentButtons.lastIndex
+            )
+
+            val newButtons = currentSetting.buttons.filter { !it.switches.contains(currentIndex.toULong()) }.toList()
+
+            for (possibleButtonPress in possibleButtonPressList) {
+                var newSetting = currentSetting.joltage
+
+                possibleButtonPress.forEachIndexed { buttonIndex, buttonPressCount ->
+                    val currentButton = currentButtons[buttonIndex]
+
+                    if (buttonPressCount > 0) {
+                        newSetting = newSetting.applyButton(currentButton, buttonPressCount.toULong())
+                    }
+                }
+
+                if (newSetting == joltageRequirements) {
+                    if (fewestButtonPress > newButtonPresses) {
+                        fewestButtonPress = newButtonPresses
+                    }
+                } else if (newSetting < joltageRequirements && newButtons.isNotEmpty()) {
+                    returnSettings.add(MachineSettings(newSetting, newButtons, newButtonPresses))
+                }
+            }
+        }
+
+        return Pair(returnSettings, fewestButtonPress)
+    }
+
+    private data class MachineSettings(val joltage: JoltageSettings, val buttons: List<Button>, val buttonPresses: ULong)
 
     override fun toString(): String {
         return "[$requiredLightBoardSetting] ${buttons.joinToString(" ") { "($it)" }} {$joltageRequirements}"
